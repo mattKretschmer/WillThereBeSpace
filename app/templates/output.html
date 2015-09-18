@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../static/img/cb_logo.jpg">
+
+    <title>WillThereBeSpace?</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../static/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="../static/css/starter-template.css" rel="stylesheet">
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <style>#map-canvas{width:500px;height:400px;background-color:#CCC;margin-bottom:20px}</style>
+  <script src="https://maps.googleapis.com/maps/api/js"></script>
+  <script>
+  function initialize() {
+  	var mapCanvas = document.getElementById('map-canvas');
+  	var myLtLg = new google.maps.LatLng({{stats[0]['Latitude']}},{{stats[0]['Longitude']}});
+  	var secondLtLg = new google.maps.LatLng({{nsl['Latitude']}},{{nsl['Longitude']}});
+  	var mapOptions = {
+  		center:myLtLg,
+  		zoom:16,
+  		mapTypeId:google.maps.MapTypeId.ROADMAP
+  	}
+  	var iconBase = 'https://maps.google.com/mapfiles/kml/shapes';
+  	var map = new google.maps.Map(mapCanvas,mapOptions);
+  	var marker = new google.maps.Marker({
+  		map:map,
+  		clickable:true,
+  		position:myLtLg,
+  		label:'Destination, {{stats[0]["P_0"]}}%'
+  	});
+  	var secondmarker = new google.maps.Marker({
+  		map:map,
+  		clickable:true,
+  		position:secondLtLg,
+  		icon:'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+  		label:'Closest Station,{{stats[0]["Delta_B"]}}'
+  	});
+  	var infowindow = new google.maps.InfoWindow({
+  		content : marker.label
+  	})
+  	var secondinfowindow = new google.maps.InfoWindow({
+  		content : secondmarker.label
+  	})
+  		google.maps.event.addListener(marker, 'click', function() {
+      infowindow.open(map,marker);
+    });
+      	google.maps.event.addListener(secondmarker, 'click', function() {
+      secondinfowindow.open(map,secondmarker);
+    });
+
+    
+	}
+	google.maps.event.addDomListener(window,'load',initialize);
+</script>
+   <!-- / To add the marker to the map, call setMap();
+    marker.setMap(map);-->    
+    
+                <script>
+                function codeaddress() {
+                        geocoder = new google.maps.Geocoder();
+                        geocoder.geocode({ 'address': document.getElementById("Id").value},
+                                function(results, status) {
+                                  if (status == google.maps.GeocoderStatus.OK) {
+//                                         document.getElementById("lat").value = results[0].geometry.location.lat();
+//                                         document.getElementById("lng").value = results[0].geometry.location.lng();
+										document.getElementById("LatLongs").value = [results[0].geometry.location.lat(),results[0].geometry.location.lng()];
+										document.myform.action='/output';
+										document.myform.submit();
+										
+                                  }
+                                  else{
+                                  document.getElementById("LatLongs").value=[40.74395411,-73.99144871];
+                                  document.myform.action='/output';
+								document.myform.submit();
+                                      } 
+                                }
+                        );
+                }
+                </script>
+
+    
+    
+  </head>
+
+  <body>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top" id="nav_color">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/"><font color ="white">WillThereBeSpace?</font></a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+<!-- 
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="#">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+ -->
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+<br><br>
+
+
+<div class = "container" id = "output_wrapper">
+<div class="container">
+        <h2>How many spots will there be?</h2>
+	</div>
+<div class = "container">
+			<h3>Please enter your destination and estimated arrival time, to find the number of bike spaces forecasted at nearby stations.</h3>
+		<div class = "container">
+			<h4><form name = 'myform' action = "/output" method = "GET" onsubmit='event.preventDefault();codeaddress();'>
+				<div class = "form-group">
+					<label for = "Id" >Destination Address: </label>
+					<input type="text" name = 'Id' id = 'Id' size = "40" placeholder="e.g. 45 W 25th Street, New York, NY ">
+				</div>
+				<div class = "form-group">
+					<label for = "Arrival_Time">I'll arrive at the station in</label>
+					<input type="text" id = "Arrival_Time" name = 'Arrival_Time' size = "10" placeholder="10">
+					<label for = "Arrival_Time">minutes. </label>
+				</div>
+				<div class = "form-group">
+					<input type="radio" name='Status' value = 'Arriving' > Returning a bike
+    				<input type="radio" name='Status' value = 'Leaving' > Taking a bike
+    				<input type="hidden" id='LatLongs' name = 'LatLongs'>
+
+				</div>
+				<button type = "submit" class = "btn btn-default btn-lg">Check if I'll be okay!</button>
+				</form>
+			</h4>
+		</div>
+<!-- 		<div id='canvas'> <img src = "app/templates/citibike1.jpg"></div> -->
+
+	<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+	<script src = "static/js/bootstrap.min.js"></script>
+	</div><!--/.container-->
+
+    <div class="container">
+      <div class="starter-template">
+        <h3>Results:</h3>
+<!--         <p class="lead">The nearest station to your destination is located at {{stats[0]['streetAddress']}}, and currently has {{sl['open']}} open slots, out of a total of {{sl['total']}}. In {{stats[0]['Arrival_Time']}} minutes, there is a <b>{{stats[0]['P_0']}}%</b> chance that the station will fill up. Most likely, {{stats[0]['Delta_B']}} spots will {{stats[0]['verb']}} in this time window.<br><br>The nearest station (shown in blue below), at {{nsl['streetAddress']}}, currently has {{nsl['open']}} open slots, out of a total of {{nsl['total']}} spots. In {{stats[0]['Arrival_Time']}} minutes, there is a <b>{{stats[1]['P_0']}}%</b> chance that the station will fill up. Most likely, {{stats[1]['Delta_B']}} spots will {{stats[1]['verb']}} in this time window.</p> -->
+      </div>
+</div>
+<h3><table class="table table-hover">
+    <tr><th>Station Address</th><th>Number of Spots</th><th>Total Possible</th><th>Chance of Filling</th></tr>
+    <tr><td>{{stats[0]['streetAddress']}}</td><td>{{sl['open']}}</td><td>{{sl['total']}}</td><td><b>{{stats[0]['P_0']}}%</b></td></tr>
+    <tr><td>{{nsl['streetAddress']}}</td><td>{{nsl['open']}}</td><td>{{nsl['total']}}</td><td><b>{{stats[1]['P_0']}}%</b></td></tr>
+    </table>
+</h3>
+</div>
+<div id = "map-canvas" class = "centeredImage" style="border:5px solid #000000;"></div>
+     </div><!-- /.container -->
+	<!--
+    <div class="container">
+      <div class="starter-template">
+        <h3>Another Result:</h3>
+        <p class="lead">Now we've taken the input and called a function from your package.<br>The result is {{the_result}}</p>
+      </div>
+	-->
+
+      <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+      <script src="static/js/bootstrap.min.js"></script>
+
+
+     </div><!-- /.container -->
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="../../dist/js/bootstrap.min.js"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
+  </body>
+</html>

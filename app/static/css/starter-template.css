@@ -1,0 +1,60 @@
+body{
+  padding-top: 50px;
+  background-color:#FAEBD7;
+/*   font-family: "Gill Sans", "Gill Sans MT", "Myriad Pro", "DejaVu Sans Condensed", "Helvetica", "Arial", "sans-serif"; */
+	text-align: left; 
+	background: url(../img/citibike1.jpg) no-repeat center center;
+}
+
+.centeredImage
+    {
+    margin-left: auto;
+    margin-right: auto;
+        padding:0px;
+ }
+.starter-template {
+  padding: 40px 15px;
+/*   text-align: center; */
+}
+/* 
+.main-body{
+	text-align:left;
+	margin-top: 20px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+	margin-left: 0px;
+}
+ */
+#nav_color{
+background-color:#0C46CF;
+}
+#input_wrapper {
+
+   background-color:#FAEBD7;
+/*   font-family: "Gill Sans", "Gill Sans MT", "Myriad Pro", "DejaVu Sans Condensed", "Helvetica", "Arial", "sans-serif"; */
+	min-width: 900px;
+	max-width: 900px;
+	text-align: justify;
+    text-justify: inter-word;
+    margin-right: auto;
+    padding-left :20px;
+    padding-right:20px;
+	margin-left: auto;
+	border-style: solid;
+	border-color: #5C5A5A;
+}
+
+#output_wrapper {
+
+   background-color:#FAEBD7;
+/*   font-family: "Gill Sans", "Gill Sans MT", "Myriad Pro", "DejaVu Sans Condensed", "Helvetica", "Arial", "sans-serif"; */
+/* 
+	min-width: 900px;
+	max-width: 900px;
+ */
+	padding-right:20px;
+	margin-right: auto;
+	margin-left: auto;
+	border-style: solid;
+	border-color: #5C5A5A;
+}
