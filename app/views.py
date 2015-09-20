@@ -29,7 +29,7 @@ def station_output():
 	station_id, arrival_t = set_Default(station_id,arrival_t)
 	
 	#Connect to the Citi Bike Stations data base.
-	db = mdb.connect(user="root",host = "localhost",passwd="whereisit",db = "Citibike_Stations",charset='utf8')
+	db = mdb.connect(user="root",host = "localhost",passwd="",db = "Citibike_Stations",charset='utf8')
 	arr = request.args.get('Status')
 	with db:
 		cur = db.cursor()
@@ -63,7 +63,7 @@ def station_output():
 	nnn_id = str(stats[1]['Id'])
 	
 	#Assumes that the data is in the current directory, would need to change if that was not the case!
-	data_path = 'StationData/'
+	data_path = ''
 	dicta = get_data_dict(data_path,nn_id)
 	dictb = get_data_dict(data_path,nnn_id)
 	num_of_values = 1000
@@ -77,8 +77,8 @@ def station_output():
 	nnsl['Longitude'] = stats[1]['Longitude']
 	nnsl['Latitude'] = stats[1]['Latitude']
 	stats[0]['Arrival_Time'] = arrival_t
-	stats[0]['Delta_B'] = mode(trip_valuesa)
-	stats[1]['Delta_B'] = mode(trip_valuesb)
+	#stats[0]['Delta_B'] = mode(trip_valuesa)
+	#stats[1]['Delta_B'] = mode(trip_valuesb)
 	
 	if arr == 'Leaving':
 		#Arriving at the station, looking for a bike, find out probability of no bikes by the time you get there, and render the template.
@@ -87,7 +87,7 @@ def station_output():
 		stats[0]['P_0'] = int(prob_a*100.0)
 		stats[1]['P_0'] = int(prob_b*100.0)
 		
-		stats = realistic_Delta_Bike(stats,sl['total'] - sl['open'],nnsl['total'] - nnsl['open'])
+		#stats = realistic_Delta_Bike(stats,sl['total'] - sl['open'],nnsl['total'] - nnsl['open'])
 		sl['open'] = sl['total'] - sl['open']
 		nnsl['open'] = nnsl['total'] - nnsl['open']
 		return render_template("leaving_output.html",stats = stats,sl = sl,nsl = nnsl)
@@ -98,5 +98,5 @@ def station_output():
 		stats[0]['P_0'] = (1. - prob_a)*100.0
 		stats[1]['P_0'] = (1. - prob_b)*100.0
 		
-		stats = realistic_Delta_Slots(stats,sl['open'],nnsl['open'])
+		#stats = realistic_Delta_Slots(stats,sl['open'],nnsl['open'])
 		return render_template("output.html",stats = stats,sl = sl,nsl = nnsl)

@@ -51,7 +51,7 @@
   		clickable:true,
   		position:secondLtLg,
   		icon:'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
-  		label:'Closest Station,{{stats[0]["Delta_B"]}}'
+  		label:'Closest Station,{{stats[1]["P_0"]}}%'
   	});
   	var infowindow = new google.maps.InfoWindow({
   		content : marker.label
@@ -71,35 +71,9 @@
 	google.maps.event.addDomListener(window,'load',initialize);
 </script>
    <!-- / To add the marker to the map, call setMap();
-    marker.setMap(map);-->    
-    
-                <script>
-                function codeaddress() {
-                        geocoder = new google.maps.Geocoder();
-                        geocoder.geocode({ 'address': document.getElementById("Id").value},
-                                function(results, status) {
-                                  if (status == google.maps.GeocoderStatus.OK) {
-//                                         document.getElementById("lat").value = results[0].geometry.location.lat();
-//                                         document.getElementById("lng").value = results[0].geometry.location.lng();
-										document.getElementById("LatLongs").value = [results[0].geometry.location.lat(),results[0].geometry.location.lng()];
-										document.myform.action='/output';
-										document.myform.submit();
-										
-                                  }
-                                  else{
-                                  document.getElementById("LatLongs").value=[40.74395411,-73.99144871];
-                                  document.myform.action='/output';
-								document.myform.submit();
-                                      } 
-                                }
-                        );
-                }
-                </script>
+    marker.setMap(map);-->
 
-    
-    
   </head>
-
   <body>
 
     <nav class="navbar navbar-inverse navbar-fixed-top" id="nav_color">
@@ -112,6 +86,7 @@
             <span class="icon-bar"></span>
           </button>
           <a class="navbar-brand" href="/"><font color ="white">WillThereBeSpace?</font></a>
+	<a class="navbar-brand" target="_newtab" href="http://www.slideshare.net/mattkretschmer/will-there-be-space"><font color ="white">Demo Slides</font></a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
 <!-- 
@@ -134,21 +109,20 @@
 <div class = "container">
 			<h3>Please enter your destination and estimated arrival time, to find the number of bike spaces forecasted at nearby stations.</h3>
 		<div class = "container">
-			<h4><form name = 'myform' action = "/output" method = "GET" onsubmit='event.preventDefault();codeaddress();'>
+			<h4><form action = "/output" method = "GET">
 				<div class = "form-group">
 					<label for = "Id" >Destination Address: </label>
 					<input type="text" name = 'Id' id = 'Id' size = "40" placeholder="e.g. 45 W 25th Street, New York, NY ">
 				</div>
 				<div class = "form-group">
-					<label for = "Arrival_Time">I'll arrive at the station in</label>
+					<label for = "Arrival_Time">I will arrive at the station in</label>
 					<input type="text" id = "Arrival_Time" name = 'Arrival_Time' size = "10" placeholder="10">
 					<label for = "Arrival_Time">minutes. </label>
 				</div>
 				<div class = "form-group">
+					<label for ='Status'>I will be:</label>
 					<input type="radio" name='Status' value = 'Arriving' > Returning a bike
     				<input type="radio" name='Status' value = 'Leaving' > Taking a bike
-    				<input type="hidden" id='LatLongs' name = 'LatLongs'>
-
 				</div>
 				<button type = "submit" class = "btn btn-default btn-lg">Check if I'll be okay!</button>
 				</form>
@@ -162,14 +136,13 @@
 
     <div class="container">
       <div class="starter-template">
-        <h3>Results:</h3>
 <!--         <p class="lead">The nearest station to your destination is located at {{stats[0]['streetAddress']}}, and currently has {{sl['open']}} open slots, out of a total of {{sl['total']}}. In {{stats[0]['Arrival_Time']}} minutes, there is a <b>{{stats[0]['P_0']}}%</b> chance that the station will fill up. Most likely, {{stats[0]['Delta_B']}} spots will {{stats[0]['verb']}} in this time window.<br><br>The nearest station (shown in blue below), at {{nsl['streetAddress']}}, currently has {{nsl['open']}} open slots, out of a total of {{nsl['total']}} spots. In {{stats[0]['Arrival_Time']}} minutes, there is a <b>{{stats[1]['P_0']}}%</b> chance that the station will fill up. Most likely, {{stats[1]['Delta_B']}} spots will {{stats[1]['verb']}} in this time window.</p> -->
       </div>
 </div>
 <h3><table class="table table-hover">
-    <tr><th>Station Address</th><th>Number of Spots</th><th>Total Possible</th><th>Chance of Filling</th></tr>
-    <tr><td>{{stats[0]['streetAddress']}}</td><td>{{sl['open']}}</td><td>{{sl['total']}}</td><td><b>{{stats[0]['P_0']}}%</b></td></tr>
-    <tr><td>{{nsl['streetAddress']}}</td><td>{{nsl['open']}}</td><td>{{nsl['total']}}</td><td><b>{{stats[1]['P_0']}}%</b></td></tr>
+    <tr><th>Station Address</th><th>Current Number of Open Docks</th><th>Station Capacity</th><th>Chance of Station Filling</th></tr>
+    <tr><td>{{stats[0]['streetAddress']}} (Shown below in red)</td><td>{{sl['open']}}</td><td>{{sl['total']}}</td><td><b>{{stats[0]['P_0']}}%</b></td></tr>
+    <tr><td>{{nsl['streetAddress']}} (Shown below in blue)</td><td>{{nsl['open']}}</td><td>{{nsl['total']}}</td><td><b>{{stats[1]['P_0']}}%</b></td></tr>
     </table>
 </h3>
 </div>
@@ -194,8 +167,8 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-    <script src="../../dist/js/bootstrap.min.js"></script>
+    <script src="static/js/bootstrap.min.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
+    <script src="static/js/ie10-viewport-bug-workaround.js"></script>
   </body>
 </html>

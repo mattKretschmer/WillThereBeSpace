@@ -73,26 +73,25 @@ def find_probability(trip_holder,bikes_left):
 	return ndb.cdf(bikes_left)
 
 def realistic_Delta_Bike(stats,limit1,limit2):
+	stats = leaving_Verb(stats,0)
+	stats = leaving_Verb(stats,1)
+		
 	if stats[0]['Delta_B'] < -limit1:
 		stats[0]['Delta_B'] = -limit1
 	if stats[1]['Delta_B'] < -limit2:
 		stats[1]['Delta_B'] = -limit2	
 	
-	stats = leaving_Verb(stats,0)
-	stats = leaving_Verb(stats,1)
-		
 	stats[0]['Delta_B'] = abs(stats[0]['Delta_B'])
 	stats[1]['Delta_B'] = abs(stats[1]['Delta_B'])	
 	return stats
 
 def realistic_Delta_Slots(stats,limit1,limit2):
+	stats = arriving_Verb(stats,0)
+	stats = arriving_Verb(stats,1)
 	if stats[0]['Delta_B'] > limit1:
 		stats[0]['Delta_B'] = limit1
 	if stats[1]['Delta_B'] > limit2:
 		stats[1]['Delta_B'] = limit2
-		
-	stats = arriving_Verb(stats,0)
-	stats = arriving_Verb(stats,1)
 	stats[0]['Delta_B'] = abs(stats[0]['Delta_B'])
 	stats[1]['Delta_B'] = abs(stats[1]['Delta_B'])	
 	return stats
