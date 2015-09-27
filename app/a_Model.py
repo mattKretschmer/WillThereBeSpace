@@ -5,7 +5,7 @@ import cPickle as pickle
 import time
 import requests
 from scipy.spatial import KDTree
-from geopy import geocoders
+from geopy.geocoders import GoogleV3
 from pytz import timezone
 from datetime import datetime
 
@@ -15,6 +15,9 @@ def set_Default(station_id,arrival_t):
 		station_id = '45 W 25th Street, New York, NY'
 	if arrival_t == '':
 		arrival_t = 20
+		
+	geolocator = GoogleV3()
+	address, station_id = geolocator.geocode(station_id)
 	return station_id,arrival_t
 
 def get_total_slots(station_id):
@@ -73,30 +76,31 @@ def find_probability(trip_holder,bikes_left):
 	return ndb.cdf(bikes_left)
 
 def realistic_Delta_Bike(stats,limit1,limit2):
-	stats = leaving_Verb(stats,0)
-	stats = leaving_Verb(stats,1)
-		
 	if stats[0]['Delta_B'] < -limit1:
 		stats[0]['Delta_B'] = -limit1
 	if stats[1]['Delta_B'] < -limit2:
 		stats[1]['Delta_B'] = -limit2	
 	
+	stats = leaving_Verb(stats,0)
+	stats = leaving_Verb(stats,1)
+		
 	stats[0]['Delta_B'] = abs(stats[0]['Delta_B'])
 	stats[1]['Delta_B'] = abs(stats[1]['Delta_B'])	
 	return stats
 
 def realistic_Delta_Slots(stats,limit1,limit2):
-	stats = arriving_Verb(stats,0)
-	stats = arriving_Verb(stats,1)
 	if stats[0]['Delta_B'] > limit1:
 		stats[0]['Delta_B'] = limit1
 	if stats[1]['Delta_B'] > limit2:
 		stats[1]['Delta_B'] = limit2
+		
+	stats = arriving_Verb(stats,0)
+	stats = arriving_Verb(stats,1)
 	stats[0]['Delta_B'] = abs(stats[0]['Delta_B'])
 	stats[1]['Delta_B'] = abs(stats[1]['Delta_B'])	
 	return stats
 	
-def find_time(arrival_t):
+def find_times(arrival_t):
 	#Calculate (from computer time, when inquiry is made, and when station will be arrived at.
 	now_time = datetime.now(timezone('US/Eastern'))
 	t = now_time.strftime("%H:%M:%S")
@@ -109,7 +113,9 @@ def find_time(arrival_t):
 	#Times had been in seconds, divide by 300 to find time index of 5 minute block.
 	ct /= 300
 	end_time /= 300
-	return end_time,ct
+	ts = range(ct,end_time+1)
+	t_list = [ t%288 for t in ts]
+	return t_list
 
 def get_counts(data):
 	a = itemfreq(data)
